@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Roboto", Arial, sans-serif;
+        background-color: #121212;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      /* Container Styling */
+      .container {
+        width: 100%;
+        max-width: 400px;
+        background: #1f1f1f;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        text-align: center;
+      }
+
+      /* Heading Styling */
+      h3 {
+        margin-bottom: 20px;
+        color: #00d4ff;
+        font-size: 1.8rem;
+        text-transform: uppercase;
+      }
+
+      /* Form and Input Styling */
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      label {
+        display: flex;
+        flex-direction: column;
+        font-weight: bold;
+        color: #cccccc;
+        font-size: 1rem;
+      }
+
+      input[type="text"] {
+        padding: 12px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 6px;
+        background-color: #2a2a2a;
+        color: #ffffff;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        box-shadow: 0 0 8px #00d4ff;
+      }
+
+      /* Button Styling */
+      button {
+        background-color: #00d4ff;
+        color: #ffffff;
+        padding: 12px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #008cbf;
+        transform: translateY(-2px);
+      }
+
+      button[type="button"] {
+        background-color: #6c757d;
+        color: #ffffff;
+        transition: background-color 0.3s;
+      }
+
+      button[type="button"]:hover {
+        background-color: #5a6268;
+      }
+
+      /* Error Message Styling */
+      p {
+        color: red;
+        font-size: 0.9rem;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h3>Enter Your Login Details</h3>
+      <form method="post" action="/login">
+        <label>
+          Name:
+          <input
+            type="text"
+            name="firstname"
+            placeholder="Enter your name"
+            required
+          />
+        </label>
+        <label>
+          Email:
+          <input
+            type="text"
+            name="email"
+            placeholder="Enter your email"
+            required
+          />
+        </label>
+        <label>
+          Password:
+          <input
+            type="text"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
+        </label>
+        <button type="submit">Login</button>
+        <button type="button" onclick="redirectToSignup()">Sign Up</button>
+      </form>
+      <% if (locals.number == 0) { %>
+      <p>Invalid Email or Password</p>
+      <% } %>
+    </div>
+    <script>
+      // Redirect to the signup page
+      function redirectToSignup() {
+        window.location.href = "http://localhost:8001/login/signup";
+      }
+    </script>
+  </body>
+</html>

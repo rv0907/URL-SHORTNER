@@ -1,0 +1,28 @@
+{
+  "name": "url-shortner",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cookie": "^1.0.2",
+    "cookie-parser": "^1.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "forever": "^1.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.2",
+    "nanoid": "^3.3.8",
+    "nanoid-base58": "^0.1.0",
+    "nodemon": "^3.1.9",
+    "parsar": "^1.0.0",
+    "shortid": "^2.2.8",
+    "three": "^0.171.0",
+    "uuid": "^11.0.3"
+  }
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign-Up Form</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Roboto", Arial, sans-serif;
+        background-color: #121212;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      /* Form Styling */
+      .signup-form {
+        background: #1f1f1f;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .signup-form h2 {
+        margin-bottom: 20px;
+        color: #00d4ff;
+        font-size: 1.8rem;
+        text-transform: uppercase;
+      }
+
+      /* Form Group Styling */
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #cccccc;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border-radius: 6px;
+        border: 1px solid #444;
+        background-color: #2a2a2a;
+        color: #ffffff;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #00d4ff;
+        box-shadow: 0 0 8px #00d4ff;
+      }
+
+      /* Button Styling */
+      .form-group button {
+        background-color: #00d4ff;
+        color: #ffffff;
+        padding: 12px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        width: 100%;
+      }
+
+      .form-group button:hover {
+        background-color: #008cbf;
+        transform: translateY(-2px);
+      }
+
+      /* Error Message Styling */
+      .error {
+        color: #ff0000;
+        font-size: 0.9rem;
+        margin-top: 10px;
+      }
+
+      /* Additional Error Message */
+      .error-password {
+        color: #ff0000;
+        font-size: 0.9rem;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <form
+      class="signup-form"
+      id="signupForm"
+      method="get"
+      action="/login/process"
+    >
+      <h2>Sign Up</h2>
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Enter your full name"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your email"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter a strong password"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="confirm-password">Confirm Password</label>
+        <input
+          type="password"
+          id="confirm-password"
+          name="confirm-password"
+          placeholder="Confirm your password"
+          required
+        />
+        <% if(locals.t==1) { %>
+        <p class="error"><%= locals.message %></p>
+        <% } %>
+        <div class="error-password" id="passwordError"></div>
+      </div>
+      <div class="form-group">
+        <button type="submit">Sign Up</button>
+      </div>
+    </form>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("signupForm");
+        const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirm-password");
+        const passwordError = document.getElementById("passwordError");
+
+        form.addEventListener("submit", function (event) {
+          // Reset any previous error messages
+          passwordError.textContent = "";
+
+          // Check if passwords match
+          if (password.value !== confirmPassword.value) {
+            event.preventDefault(); // Prevent form submission
+            passwordError.textContent = "Passwords do not match!";
+            return; // Exit function early
+          }
+
+          // Check if password length is less than 6 characters
+          if (password.value.length < 6) {
+            event.preventDefault(); // Prevent form submission
+            passwordError.textContent =
+              "Password must be at least 6 characters long!";
+            return; // Exit function early
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

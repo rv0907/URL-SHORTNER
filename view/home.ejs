@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Roboto", Arial, sans-serif;
+        background-color: #121212;
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      /* Container Styling */
+      .container {
+        background: #1f1f1f;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+      }
+
+      /* Heading Styling */
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #00d4ff;
+        text-transform: uppercase;
+      }
+
+      /* Form Styling */
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      label {
+        display: flex;
+        flex-direction: column;
+        font-weight: bold;
+        color: #cccccc;
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+
+      input[type="url"] {
+        padding: 12px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 6px;
+        background-color: #2a2a2a;
+        color: #ffffff;
+      }
+
+      input[type="url"]:focus {
+        outline: none;
+        box-shadow: 0 0 8px #00d4ff;
+      }
+
+      /* Button Styling */
+      button {
+        background-color: #00d4ff;
+        color: #ffffff;
+        padding: 12px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      button:hover {
+        background-color: #008cbf;
+        transform: translateY(-2px);
+      }
+
+      /* Generated URL Styling */
+      p {
+        margin-top: 20px;
+        font-size: 1rem;
+        color: #00ff99;
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Enter the URL</h1>
+      <form method="post" action="/user/data">
+        <fieldset>
+          <label title="Enter URL">
+            URL:
+            <input
+              type="url"
+              name="url"
+              placeholder="https://example.com"
+              required
+            />
+          </label>
+          <button type="submit">Generate</button>
+        </fieldset>
+      </form>
+      <% if (locals.id) { %>
+      <p>
+        URL Generated:
+        <a
+          href="http://localhost:8001/user/<%= id %>"
+          target="_blank"
+          style="color: #00d4ff"
+          >http://localhost:8001/user/<%= id %></a
+        >
+      </p>
+      <% } %>
+    </div>
+  </body>
+</html>
