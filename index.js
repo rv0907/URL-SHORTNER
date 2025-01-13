@@ -4,7 +4,8 @@ const cookieParser = require("cookie-parser");
 const urlroutes = require("./routes/url");
 const loginroute = require("./routes/login");
 const restrictologgeduserONLY = require("./middleware/auth");
-
+const upoload = require("./routes/upload");
+require("dotenv").config();
 const app = express();
 
 // Middleware for handling JSON and URL-encoded data
@@ -20,6 +21,7 @@ app.set("views", path.resolve("./view"));
 console.log("Server setup in progress");
 
 // Routes
+app.use("/upload", upoload);
 app.use("/user", restrictologgeduserONLY, urlroutes); // Protected `/user` routes
 app.use("/login", loginroute); // Public login route
 
@@ -30,6 +32,6 @@ app.use((req, res) => {
 
 // Start the server
 const PORT = 8001;
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running at http://localhost:${process.env.PORT}`);
 });

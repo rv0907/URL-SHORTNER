@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
-const secreat = "1234";
+const env = require("dotenv");
+const secreat = process.env.key;
+console.log(secreat);
+
 function setuser(user) {
   return jwt.sign(
     {
