@@ -1,7 +1,14 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 
-// Connect to MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/url-shortner");
+// use process.env.MONGO_URI
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log(" Connected to MongoDB Atlas"))
+  .catch((err) => console.error(" MongoDB connection error:", err));
 
 // Define Schema
 console.log("g");
