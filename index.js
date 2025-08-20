@@ -4,8 +4,9 @@ const cookieParser = require("cookie-parser");
 const urlroutes = require("./routes/url");
 const loginroute = require("./routes/login");
 const restrictologgeduserONLY = require("./middleware/auth");
-const upoload = require("./routes/upload");
+const upload = require("./routes/upload");
 require("dotenv").config();
+
 const app = express();
 
 // Middleware for handling JSON and URL-encoded data
@@ -13,17 +14,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 
-// Set up view engine
-app.set("view engine", "ejs");
-app.set("views", path.resolve("./view"));
-
 // Debugging
 console.log("Server setup in progress");
 
 // Routes
-app.use("/upload", upoload);
-app.use("/user", restrictologgeduserONLY, urlroutes); // Protected `/user` routes
-app.use("/", loginroute); // Public login route
+app.use("/upload", upload);
+app.use("/user", restrictologgeduserONLY, urlroutes); // Protected user routes
+app.use("/auth", loginroute); // Auth routes
 
 // 404 Fallback Route
 app.use((req, res) => {
