@@ -18,8 +18,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // View Engine
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "view"));
-
+app.set("views", path.join(__dirname, "view")); // note: "view" not "views"
 
 // Database connection
 mongoose
@@ -34,7 +33,7 @@ app.use("/upload", uploadRouter);
 
 // Home page
 app.get("/", (req, res) => {
-  res.render("home");
+  res.render("home", { shortUrl: null });
 });
 
 // 404 Handler
