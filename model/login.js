@@ -1,38 +1,50 @@
-require("dotenv").config();
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
-// use process.env.MONGO_URI
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log(" Connected to MongoDB Atlas"))
-  .catch((err) => console.error(" MongoDB connection error:", err));
-
-// Define Schema
-const loginFormSchema = new mongoose.Schema(
+// Define schema
+const userSchema = new mongoose.Schema(
   {
-    firstname: {
+    username: {
       type: String,
       required: true,
+      unique: true,
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
     },
     password: {
       type: String,
       required: true,
+      minlength: 6,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true } // adds createdAt & updatedAt
 );
 
-// Define Model
-const UserLogin = mongoose.model("UserLogin", loginFormSchema);
+// 🔒 Hash password before saving
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
 
-module.exports = UserLogin;
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ✅ Method to compare password during login
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  return bcrypt.compare(enteredPassword, this.password);
+};
+
+// Create model
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;
