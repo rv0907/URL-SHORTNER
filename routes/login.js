@@ -1,48 +1,36 @@
 const express = require("express");
-const { setuser } = require("../services/auth");
-const UserLogin = require("../model/login");
+const router = express.Router();
+const User = require("../models/User");
 
-const loginroute = express.Router();
-
-// Login page
-loginroute.get("/", (req, res) => {
-  res.render("login");
-});
-
-// Signup page
-loginroute.get("/signup", (req, res) => {
+// Signup Page
+router.get("/signup", (req, res) => {
   res.render("signup");
 });
 
-// Signup process
-loginroute.get("/process", async (req, res) => {
-  const { name, email, password } = req.query;
-
-  if (!name || !email || !password) {
-    return res.render("signup", { message: "Fill in all fields" });
+// Signup Logic
+router.post("/signup", async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    await User.create({ username, password });
+    res.redirect("/auth/login");
+  } catch (err) {
+    res.send("Signup error: " + err.message);
   }
-
-  const existing = await UserLogin.findOne({ email });
-  if (existing) {
-    return res.render("signup", { message: "Email already exists" });
-  }
-
-  await UserLogin.create({ firstname: name, email, password });
-  return res.render("login", { message: "Signup successful! Please login." });
 });
 
-// Login process
-loginroute.post("/", async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = await UserLogin.findOne({ email });
-  if (!user || user.password !== password) {
-    return res.render("login", { message: "Invalid email or password" });
-  }
-
-  const jwttoken = setuser(user);
-  res.cookie("jwt", jwttoken);
-  return res.render("home", { user });
+// Login Page
+router.get("/login", (req, res) => {
+  res.render("login");
 });
 
-module.exports = loginroute;
+// Login Logic
+router.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+  const user = await User.findOne({ username, password });
+  if (!user) {
+    return res.send("Invalid credentials");
+  }
+  res.redirect("/");
+});
+
+module.exports = router;
