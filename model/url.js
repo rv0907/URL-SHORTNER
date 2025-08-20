@@ -1,20 +1,8 @@
-require("dotenv").config();
 const mongoose = require("mongoose");
 
-// use process.env.MONGO_URI
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log(" Connected to MongoDB Atlas"))
-  .catch((err) => console.error(" MongoDB connection error:", err));
-
-// Define Schema
-console.log("g");
-const userSchema = new mongoose.Schema(
+const urlSchema = new mongoose.Schema(
   {
-    shortid: {
+    shortId: {
       type: String,
       required: true,
       unique: true,
@@ -23,17 +11,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    vistorhistory: [
+    visitorHistory: [
       {
-        timestamp: { type: Number },
+        timestamp: { type: Date, default: Date.now },
       },
     ],
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
-  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+  { timestamps: true }
 );
 
-// Create Model
-const User = mongoose.model("User", userSchema);
-
-// Export Model
-module.exports = User;
+module.exports = mongoose.model("Url", urlSchema);
