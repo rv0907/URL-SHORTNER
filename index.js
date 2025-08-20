@@ -23,7 +23,7 @@ console.log("Server setup in progress");
 // Routes
 app.use("/upload", upoload);
 app.use("/user", restrictologgeduserONLY, urlroutes); // Protected `/user` routes
-app.use("/login", loginroute); // Public login route
+app.use("/", loginroute); // Public login route
 
 // 404 Fallback Route
 app.use((req, res) => {
