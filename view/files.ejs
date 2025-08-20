@@ -3,12 +3,81 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>upload file</title>
+    <title>Upload File</title>
+    <style>
+      body {
+        font-family: "Roboto", Arial, sans-serif;
+        background-color: #121212;
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        background: #1f1f1f;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #00d4ff;
+        text-transform: uppercase;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      input[type="file"] {
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        background-color: #2a2a2a;
+        color: #ffffff;
+      }
+      input[type="file"]:focus {
+        outline: none;
+        box-shadow: 0 0 8px #00d4ff;
+      }
+      button {
+        background-color: #00d4ff;
+        color: #ffffff;
+        padding: 12px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+      button:hover {
+        background-color: #008cbf;
+        transform: translateY(-2px);
+      }
+      p {
+        margin-top: 15px;
+        color: #00ff99;
+      }
+    </style>
   </head>
   <body>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-      <input type="file" name="profileimage" />
-      <button type="submit">upload</button>
-    </form>
+    <div class="container">
+      <h1>Upload File</h1>
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="profileimage" required />
+        <button type="submit">Upload</button>
+      </form>
+
+      <% if (locals.filename) { %>
+      <p>✅ File uploaded: <%= filename %></p>
+      <% } %>
+    </div>
   </body>
 </html>
