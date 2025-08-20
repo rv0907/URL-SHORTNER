@@ -17,10 +17,34 @@ app.use(cookieParser());
 // Debugging
 console.log("Server setup in progress");
 
+// Root welcome route
+app.get("/", (req, res) => {
+  res.json({
+    message: "Welcome to the URL Shortener API 🚀",
+    endpoints: {
+      auth: {
+        login: "POST /auth/",
+        signup: "GET /auth/signup",
+        signup_process: "GET /auth/process?name=...&email=...&password=...",
+      },
+      upload: {
+        form: "GET /upload",
+        upload_file: "POST /upload",
+      },
+      url_shortener: {
+        info: "GET /user/",
+        create: "POST /user/data { url }",
+        analytics: "GET /user/data/:shortid",
+        redirect: "GET /user/:shortid",
+      },
+    },
+  });
+});
+
 // Routes
 app.use("/upload", upload);
-app.use("/user", restrictologgeduserONLY, urlroutes); // Protected user routes
-app.use("/auth", loginroute); // Auth routes
+app.use("/user", restrictologgeduserONLY, urlroutes);
+app.use("/auth", loginroute);
 
 // 404 Fallback Route
 app.use((req, res) => {
