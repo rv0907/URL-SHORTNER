@@ -1,48 +1,27 @@
 const express = require("express");
-const path = require("path");
-const fs = require("fs");
 const multer = require("multer");
+const path = require("path");
+
 const uploadRouter = express.Router();
 
-// Define the upload directory
-const uploadDir = path.join(__dirname, "uploads");
-
-// Ensure the upload directory exists
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure storage for Multer
+// Multer config
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir); // Use the verified directory
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-    );
-  },
+  destination: (req, file, cb) => cb(null, "uploads/"),
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + path.extname(file.originalname)),
 });
 
-// Initialize the upload middleware
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
-// Route to test API
+// Upload form
 uploadRouter.get("/", (req, res) => {
-  return res.json({ message: "Upload API is working" });
+  res.render("files");
 });
 
-// Route to handle the file upload
-uploadRouter.post("/", upload.single("profileimage"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded" });
-  }
-  return res.json({
-    message: "File uploaded successfully",
-    fileName: req.file.filename,
-  });
+// Handle upload
+uploadRouter.post("/", upload.single("profileimage"), (req, res) => {
+  if (!req.file) return res.render("files", { message: "No file uploaded" });
+  res.render("files", { message: "File uploaded!", fileName: req.file.filename });
 });
 
 module.exports = uploadRouter;
