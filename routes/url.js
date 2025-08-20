@@ -1,53 +1,28 @@
 const express = require("express");
+const router = express.Router();
 const { nanoid } = require("nanoid");
-const user = require("../model/url");
+const Url = require("../models/Url");
 
-const urlroutes = express.Router();
+// Create Short URL
+router.post("/shorten", async (req, res) => {
+  const { longUrl } = req.body;
+  if (!longUrl) return res.send("Please provide a URL");
 
-// Show URL shortener form
-urlroutes.get("/", (req, res) => {
-  res.render("home");
+  const shortId = nanoid(6);
+  const shortUrl = `${req.protocol}://${req.get("host")}/${shortId}`;
+
+  await Url.create({ longUrl, shortId, shortUrl });
+
+  res.render("home", { shortUrl });
 });
 
-// Create short URL
-urlroutes.post("/data", async (req, res) => {
-  try {
-    const { url } = req.body;
-    if (!url) return res.render("home", { message: "Please enter a URL" });
+// Redirect short URL
+router.get("/:shortId", async (req, res) => {
+  const { shortId } = req.params;
+  const url = await Url.findOne({ shortId });
 
-    const shortid = nanoid(6);
-    await user.create({
-      shortid,
-      redirectURL: url,
-      vistorhistory: [],
-    });
-
-    res.render("home", { shortid });
-  } catch (err) {
-    res.render("home", { message: "Error creating short URL" });
-  }
+  if (!url) return res.status(404).send("URL not found");
+  res.redirect(url.longUrl);
 });
 
-// Analytics
-urlroutes.get("/data/:shortid", async (req, res) => {
-  const record = await user.findOne({ shortid: req.params.shortid });
-  if (!record) return res.render("home", { message: "Short URL not found" });
-
-  res.render("analytics", {
-    shortid: req.params.shortid,
-    clicks: record.vistorhistory.length,
-  });
-});
-
-// Redirect
-urlroutes.get("/:shortid", async (req, res) => {
-  const record = await user.findOne({ shortid: req.params.shortid });
-  if (!record) return res.render("home", { message: "URL not found" });
-
-  record.vistorhistory.push({ timestamp: Date.now() });
-  await record.save();
-
-  res.redirect(record.redirectURL);
-});
-
-module.exports = urlroutes;
+module.exports = router;
