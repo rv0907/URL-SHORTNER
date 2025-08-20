@@ -1,59 +1,48 @@
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const urlroutes = require("./routes/url");
+const mongoose = require("mongoose");
+
+// Routes
 const loginroute = require("./routes/login");
-const restrictologgeduserONLY = require("./middleware/auth");
-const upload = require("./routes/upload");
-require("dotenv").config();
+const urlroutes = require("./routes/urlroutes");
+const uploadRouter = require("./routes/upload");
 
 const app = express();
 
-// Middleware for handling JSON and URL-encoded data
-app.use(express.urlencoded({ extended: false }));
+// Middleware
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
 
-// Debugging
-console.log("Server setup in progress");
+// View Engine
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-// Root welcome route
-app.get("/", (req, res) => {
-  res.json({
-    message: "Welcome to the URL Shortener API 🚀",
-    endpoints: {
-      auth: {
-        login: "POST /auth/",
-        signup: "GET /auth/signup",
-        signup_process: "GET /auth/process?name=...&email=...&password=...",
-      },
-      upload: {
-        form: "GET /upload",
-        upload_file: "POST /upload",
-      },
-      url_shortener: {
-        info: "GET /user/",
-        create: "POST /user/data { url }",
-        analytics: "GET /user/data/:shortid",
-        redirect: "GET /user/:shortid",
-      },
-    },
-  });
-});
+// Database connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error("MongoDB Error:", err));
 
 // Routes
-app.use("/upload", upload);
-app.use("/user", restrictologgeduserONLY, urlroutes);
 app.use("/auth", loginroute);
+app.use("/user", urlroutes);
+app.use("/upload", uploadRouter);
 
-// 404 Fallback Route
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
+// Home page
+app.get("/", (req, res) => {
+  res.render("home");
 });
 
-// Start the server
-const PORT = process.env.PORT || 8001;
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).render("404", { url: req.originalUrl });
+});
 
+// Start Server
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`Server is running at port ${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
