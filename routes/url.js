@@ -1,12 +1,13 @@
 const express = require("express");
 const urlroutes = express.Router();
 const user = require("../model/url");
-const { nanoid } = require("nanoid"); // Import nanoid directly
+const { nanoid } = require("nanoid");
 
 // Route to create a new short URL
 urlroutes.get("/", (req, res) => {
-  return res.render("home");
+  return res.json({ message: "URL Shortener API is working" });
 });
+
 urlroutes.post("/data", async (req, res) => {
   try {
     const userdata = req.body;
@@ -15,14 +16,13 @@ urlroutes.post("/data", async (req, res) => {
     }
 
     const ids = nanoid(); // Generate a unique short ID
-    const newURL = await user.create({
+    await user.create({
       shortid: ids,
       redirectURL: userdata.url,
-      vistorhistory: [], // Initialize with an empty array
+      vistorhistory: [],
     });
-    console.log(ids);
 
-    return res.status(200).render("home", { id: ids }); // Send back the short ID
+    return res.status(200).json({ message: "Short URL created", id: ids });
   } catch (err) {
     return res
       .status(500)
@@ -40,34 +40,30 @@ urlroutes.get("/data/:shortid", async (req, res) => {
       return res.status(404).json({ message: "Short URL not found" });
     }
 
-    res.status(200).send({ totalclicks: data.vistorhistory.length });
+    res.status(200).json({ totalclicks: data.vistorhistory.length });
   } catch (err) {
     return res
       .status(500)
       .json({ message: "Internal Server Error", error: err.message });
   }
 });
-let t = 0;
+
 // Route to redirect to the original URL based on the short ID
 urlroutes.get("/:id", async (req, res) => {
-  console.log("l");
-  console.log(req.params);
-  // console.log(req);
   const urll = await user.findOne({ shortid: req.params.id });
-  console.log(urll);
 
   if (!urll) {
     return res.status(404).json({ message: "URL not found" });
   }
 
   const time = Date.now();
-  urll.vistorhistory.push({ timestamp: time }); // Store the timestamp
-  await urll.save(); // Save the updated visitor history
-  console.log("hd");
-  console.log(urll.redirectURL);
+  urll.vistorhistory.push({ timestamp: time });
+  await urll.save();
 
-  return res.redirect(urll.redirectURL);
-  // Redirect to the original URL
+  return res.json({
+    message: "Redirecting to original URL",
+    redirectURL: urll.redirectURL,
+  });
 });
 
 module.exports = urlroutes;
