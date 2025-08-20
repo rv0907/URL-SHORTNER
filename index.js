@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 // Routes
 const loginroute = require("./routes/login");
-const urlroutes = require("./routes/urlroutes");
+const urlroutes = require("./routes/url");
 const uploadRouter = require("./routes/upload");
 
 const app = express();
