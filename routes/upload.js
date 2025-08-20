@@ -29,18 +29,20 @@ const storage = multer.diskStorage({
 // Initialize the upload middleware
 const upload = multer({ storage: storage });
 
-// Route to render the file upload form
+// Route to test API
 uploadRouter.get("/", (req, res) => {
-  return res.render("files");
+  return res.json({ message: "Upload API is working" });
 });
 
 // Route to handle the file upload
 uploadRouter.post("/", upload.single("profileimage"), async (req, res) => {
   if (!req.file) {
-    return res.status(400).send("No file uploaded");
+    return res.status(400).json({ message: "No file uploaded" });
   }
-  // Render the "files" view with upload confirmation
-  return res.render("files", { fileName: req.file.filename });
+  return res.json({
+    message: "File uploaded successfully",
+    fileName: req.file.filename,
+  });
 });
 
 module.exports = uploadRouter;
