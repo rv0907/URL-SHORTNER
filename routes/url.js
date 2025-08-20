@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { nanoid } = require("nanoid");
-const Url = require("../models/Url");
+const Url = require("../models/url");
 
 // Create Short URL
 router.post("/shorten", async (req, res) => {
