@@ -1,57 +1,48 @@
 const express = require("express");
-const { v4: uuidv4 } = require("uuid");
-const loginroute = express.Router();
 const { setuser } = require("../services/auth");
 const UserLogin = require("../model/login");
 
-// login page
-loginroute.get("/", async (req, res) => {
-  return res.json({ message: "Login API is working" });
+const loginroute = express.Router();
+
+// Login page
+loginroute.get("/", (req, res) => {
+  res.render("login");
 });
 
-// signup page process
+// Signup page
+loginroute.get("/signup", (req, res) => {
+  res.render("signup");
+});
+
+// Signup process
 loginroute.get("/process", async (req, res) => {
   const { name, email, password } = req.query;
 
-  if (!name || !password || !email) {
-    return res.status(400).json({ message: "Fill each row" });
+  if (!name || !email || !password) {
+    return res.render("signup", { message: "Fill in all fields" });
   }
 
-  const existing = await UserLogin.findOne({ email: email });
+  const existing = await UserLogin.findOne({ email });
   if (existing) {
-    return res.status(400).json({ message: "Email already exists" });
+    return res.render("signup", { message: "Email already exists" });
   }
 
-  await UserLogin.create({
-    firstname: name,
-    email: email,
-    password: password,
-  });
-
-  return res.json({ message: "User created successfully" });
+  await UserLogin.create({ firstname: name, email, password });
+  return res.render("login", { message: "Signup successful! Please login." });
 });
 
-// login form handling
+// Login process
 loginroute.post("/", async (req, res) => {
-  const data = req.body;
-  if (!data || !data.firstname || !data.email || !data.password) {
-    return res.status(400).json({ message: "Invalid user data" });
-  }
+  const { email, password } = req.body;
 
-  const user = await UserLogin.findOne({ email: data.email });
-  if (!user || user.password !== data.password) {
-    return res.status(401).json({ message: "Invalid credentials" });
+  const user = await UserLogin.findOne({ email });
+  if (!user || user.password !== password) {
+    return res.render("login", { message: "Invalid email or password" });
   }
 
   const jwttoken = setuser(user);
   res.cookie("jwt", jwttoken);
-
-  return res.json({ message: "Login successful", token: jwttoken });
-});
-
-// signup form
-loginroute.get("/signup", async (req, res) => {
-  return res.json({ message: "Signup API is working" });
+  return res.render("home", { user });
 });
 
 module.exports = loginroute;
