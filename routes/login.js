@@ -3,68 +3,55 @@ const { v4: uuidv4 } = require("uuid");
 const loginroute = express.Router();
 const { setuser } = require("../services/auth");
 const UserLogin = require("../model/login");
-console.log("jg");
 
-//login page
+// login page
 loginroute.get("/", async (req, res) => {
-  return res.render("login");
+  return res.json({ message: "Login API is working" });
 });
-//signup page process
-loginroute.get("/process", async (req, res) => {
-  // console.log(req.params.email);
-  console.log(req);
 
+// signup page process
+loginroute.get("/process", async (req, res) => {
   const { name, email, password } = req.query;
-  console.log(name, email, password);
 
   if (!name || !password || !email) {
-    return res.render("signup", { message: "Fill the each row", t: 1 });
+    return res.status(400).json({ message: "Fill each row" });
   }
-  const a = await UserLogin.findOne({ email: email });
-  if (a) {
-    return res.render("signup", { message: "Email Already Exist", t: 1 });
+
+  const existing = await UserLogin.findOne({ email: email });
+  if (existing) {
+    return res.status(400).json({ message: "Email already exists" });
   }
+
   await UserLogin.create({
     firstname: name,
     email: email,
     password: password,
   });
 
-  return res.render("login");
+  return res.json({ message: "User created successfully" });
 });
-//login form handling
+
+// login form handling
 loginroute.post("/", async (req, res) => {
   const data = req.body;
   if (!data || !data.firstname || !data.email || !data.password) {
-    return res.status(404).json({ message: "invalid user" });
+    return res.status(400).json({ message: "Invalid user data" });
   }
-  console.log(data);
 
-  const a = await UserLogin.findOne({ email: data.email });
-  console.log(a);
-
-  if (!a) {
-    console.log("do");
-
-    const number = 0;
-    return res.render("login", { number: number });
+  const user = await UserLogin.findOne({ email: data.email });
+  if (!user || user.password !== data.password) {
+    return res.status(401).json({ message: "Invalid credentials" });
   }
-  if (a.password != data.password) {
-    console.log(a.password, " ", data.password);
 
-    const number = 0;
-    return res.render("login", { number: number });
-  }
-  //jwt tokens
-
-  const jwttoken = setuser(a);
+  const jwttoken = setuser(user);
   res.cookie("jwt", jwttoken);
-  return res.render("home");
+
+  return res.json({ message: "Login successful", token: jwttoken });
 });
 
-//sign up handling
+// signup form
 loginroute.get("/signup", async (req, res) => {
-  return res.render("signup");
+  return res.json({ message: "Signup API is working" });
 });
 
 module.exports = loginroute;
